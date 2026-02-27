@@ -1,0 +1,43 @@
+# ---------------------------------------
+# INSECURE DOCKERFILE - TRAINING PURPOSES ONLY
+# ---------------------------------------
+
+# 1️⃣ Uses latest tag (not pinned) - supply chain risk
+FROM python:latest
+
+# 2️⃣ Runs as root (default user is root)
+USER root
+
+# 3️⃣ Hardcoded sensitive environment variables
+ENV DB_PASSWORD="SuperSecretPassword123"
+ENV AWS_ACCESS_KEY_ID="AKIAEXAMPLEKEY"
+ENV AWS_SECRET_ACCESS_KEY="verysecretkey123"
+ENV API_TOKEN="my-insecure-api-token"
+
+# 4️⃣ Copies entire context (may include .git, secrets, etc.)
+COPY . /app
+
+WORKDIR /app
+
+# 5️⃣ Installs packages without version pinning
+RUN apt-get update && \
+    apt-get install -y curl vim net-tools && \
+    pip install flask requests
+
+# 6️⃣ Leaves package cache (larger attack surface)
+# No cleanup of apt cache
+
+# 7️⃣ Creates world-writable directory
+RUN mkdir /data && chmod 777 /data
+
+# 8️⃣ Adds sensitive file directly into image
+RUN echo "SSN=123-45-6789" > /app/secrets.txt && \
+    echo "CreditCard=4111111111111111" >> /app/secrets.txt && \
+    echo "PHI=Patient:JohnDoe Diagnosis:Diabetes" >> /app/secrets.txt
+
+# 9️⃣ Exposes unnecessary port
+EXPOSE 22
+EXPOSE 5000
+
+# 🔟 Runs app as root
+CMD ["python", "app.py"]
