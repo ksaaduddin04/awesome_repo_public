@@ -2,6 +2,7 @@
 # Mock Personally Identifiable Information (PII)
 # -----------------------------
 
+
 user_profile = {
     "full_name": "John Doe",
     "email": "john.doe@example.com",
