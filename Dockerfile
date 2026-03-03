@@ -1,2 +1,2 @@
-FROM redis
+FROM redis:8.4
 EXPOSE 80
